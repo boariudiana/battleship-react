@@ -10,8 +10,9 @@ const getCellStrings = () => {
 
     for(let i = 0; i<=9; i++){
      for (let j = 0; j <= 9; j++){
+         const numberChar = i+1;
          const letterCharacter = getCharacter(j)
-         result.push(`${i}${letterCharacter}`)
+         result.push(`${numberChar.toString()}${letterCharacter}`)
      }
     };
     return result;
@@ -20,7 +21,7 @@ const getCellStrings = () => {
 
 
 const Board = props => {
-    const cells = getCellStrings().map((cell, index) => <div key={index}><span>{cell}</span></div>);
+    const cells = getCellStrings().map((cell, index) => <div key={index}>{cell}</div>);
 
     return (<div className={'board'}>
                 {cells}
