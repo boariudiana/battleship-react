@@ -40,8 +40,8 @@ export const generateEmptyLayout = () => {
 
 export const SHIPS = {
     warship : 'warship',
-    distroyer1 : 'disrtoyer1',
-    distroyer2 : 'disrtoyer2',
+    distroyer1 : 'distroyer1',
+    distroyer2 : 'distroyer2',
 }
 
-const ALLSHIPS = [SHIPS.warship, SHIPS.distroyer1, SHIPS.distroyer2]
+export const ALLSHIPS = [SHIPS.warship, SHIPS.distroyer1, SHIPS.distroyer2]

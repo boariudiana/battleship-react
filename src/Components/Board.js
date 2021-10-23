@@ -8,8 +8,8 @@ const Board = props => {
         <div 
             key={index}
             className={cell.cellStatus === CELL_STATE.full ? 'filledColor' : ''}
-            onClick={() => props.onHandleClick(index)}>{cell.value}</div>));
-
+            onClick={props.disabledClick ? () => {} : () => props.onHandleClick(index)}>
+                {cell.value}</div>));
     return (<div className={'board'}>
                 {cells}
             </div>)
