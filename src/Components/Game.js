@@ -4,22 +4,9 @@ import ComputerBoard from './ComputerBoard'
 import SelectShipDropDown from './SelectShipDropDown'
 import DirectionDropDown from './DirectionDropdown';
 import Alert from './CustomAlert';
-import { indexToCoords , BOARD_COLUMNS, BOARD_ROWS, generateEmptyLayout, CELL_STATE, SHIPS, ALLSHIPS } from './layouHelpers';
+import { indexToCoords , BOARD_COLUMNS, BOARD_ROWS, generateEmptyLayout, CELL_STATE, SHIPS, ALLSHIPS, generateComputerShips } from './layouHelpers';
 import { Button } from '@mui/material';
 import '../styles/Game.css';
-
-const generateRandomNumber = (min, max) =>  {
-    return Math.floor(Math.random() * (max - min) + min);
-      };
-const generateRandomPointAndDir = () => {
-    const point = generateRandomNumber(0, 99);
-    const direction = generateRandomNumber(0, 99) % 2 === 0 ? 'horizontal' : 'vertical';
-
-    return {
-        point,
-        direction,
-    }
-}
 
 const Game = props => {
 
@@ -31,9 +18,9 @@ const Game = props => {
     const [disabledShips, setDisabledShips] = useState([])
     const [alertMessage, setAlertMessage] = useState('')
     const [userCells, setUserCells] = useState(generateEmptyLayout());
-    const [computerCells , setComputerCells] = useState(generateEmptyLayout());
+    const [computerCells , setComputerCells] = useState(generateComputerShips());
     const [readyToStart, setReadyToStart] = useState(false);
-    const [enableClickOnBoard, setEnableClickOnBoard] =useState(false);
+    const [enableClickOnBoard, setEnableClickOnBoard] = useState(false);
 
     useEffect(() => {
         if(availableShips.length === 0){
@@ -62,106 +49,10 @@ const Game = props => {
     };
 
     const handleCompBoardClick = (index) => {
-        
+        // continue here
     };
 
-    const generateShip = (availableShipNr, cellNumbers) => {
-        const data = generateRandomPointAndDir();
-        console.log('point', data.point)
-        console.log('direction', data.direction)
-
-        const coord = indexToCoords(data.point);
-
-        if(data.direction === 'horizontal'){
-            const isPointOustide = coord.x + cellNumbers > BOARD_ROWS
-            if (isPointOustide) {
-                    return availableShipNr;
-                };
-            
-            const shipCells= computerCells.filter((cell, indexOfCell)=> (indexOfCell >= data.point && indexOfCell < data.point + cellNumbers) )
-            
-            const arePointsUnavailable = shipCells.filter(item => item.cellStatus !== CELL_STATE.empty).length > 0;
-
-            if (arePointsUnavailable) {
-                return availableShipNr;
-            }
-            };
-        
-            if(data.direction === 'vertical'){
-                const isPointOustide = coord.y + cellNumbers > BOARD_COLUMNS
-                if (isPointOustide) {
-                        return availableShipNr;
-                    }
-                let incrementer = 0;
-                let iteration = 0
-
-                const shipCells = computerCells.filter((cell, indexOfCell) => {
-                    if ( indexOfCell === data.point + incrementer && iteration < cellNumbers){
-                        incrementer = incrementer + 10;
-                        iteration ++ ;
-                        return true;
-                    }
-                    return false;
-                 });
-                
-                const arePointsUnavailable = shipCells.filter(item => item.cellStatus !== CELL_STATE.empty).length > 0;
-        
-                if (arePointsUnavailable) {
-                    return availableShipNr;
-                }
-            }
-
-                setComputerCells(prevState => {
-                    if (data.direction ==='horizontal') {
-                        const newCellStatus = prevState.map((cell, cellIndex) => {
-                            if (cellIndex >= data.point && cellIndex < data.point + cellNumbers) {
-                                return {...cell, cellStatus: CELL_STATE.full,  };
-                            }
-                            return cell;
-                        })
-                        return newCellStatus;
-                         
-                    } 
-                    if(data.direction === 'vertical') {
-                        let incrementer = 0;
-                        let iteration = 0
-                        const newCellStatus = prevState.map((cell, cellIndex) => {
-                            if (cellIndex === data.point + incrementer && iteration < cellNumbers) {
-                                incrementer = incrementer + 10;
-                                iteration ++;
-                                return {...cell, cellStatus: CELL_STATE.full};
-                            }
-                            return cell;
-                        })
-                            return newCellStatus; 
-                    };
-
-
-                })
-                console.log('computerCells',computerCells)
-                return availableShipNr + 1;
-
-    }
-    const placeComputerShips = () => {
-        let warship = 0;
-        while(warship <= 0){
-            warship = generateShip(warship, 5);
-        };
-
-        let distroyer1 = 0;
-        while(distroyer1 <= 0) {
-            distroyer1 = generateShip(distroyer1, 4)
-        };
-        let distroyer2 = 0;
-        while(distroyer2 <= 0) {
-            distroyer2 = generateShip(distroyer2, 4)
-        };
-
-        return;
-    }
-
     const handleStartGame = () => {
-        placeComputerShips();
         setEnableClickOnBoard(true)
     };
 
