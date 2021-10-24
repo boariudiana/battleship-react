@@ -10,7 +10,7 @@ import Select from '@mui/material/Select';
 
 
   return (
-    <div>
+    <div className={'select'}>
        <FormControl sx={{ m: 1, minWidth: 400 }}>
         <InputLabel id="demo-simple-select-helper-label">Choose direction</InputLabel>
         <Select

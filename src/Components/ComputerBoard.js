@@ -3,12 +3,12 @@ import { CELL_STATE } from "./layouHelpers";
 
 import '../styles/Board.css'
 
-const Board = props => {
+const UserBoard = props => {
     const cells = props.boardCells.map((cell, index) => (
         <div 
             key={index}
             className={cell.cellStatus === CELL_STATE.full ? 'filledColor' : ''}
-            onClick={props.disabledClick ? () => {} : () => props.onHandleClick(index)}>
+            onClick={() => props.onHandleClick(index)}>
                 {cell.value}</div>));
     return (<div className={'board'}>
                 {cells}
@@ -16,4 +16,4 @@ const Board = props => {
 
 };
 
-export default Board;
+export default UserBoard;

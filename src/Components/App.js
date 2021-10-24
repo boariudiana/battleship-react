@@ -1,13 +1,13 @@
 
 import '../styles/App.css';
 import { Header } from './Header';
-import FleetBoard from './FleetBoard';
+import Game from './Game';
 
 function App() {
   return (
-    <div>
+    <div className={'App'}>
       <Header />
-      <FleetBoard/>
+      <Game/>
     </div>
   );
 }

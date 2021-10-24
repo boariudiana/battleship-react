@@ -10,7 +10,7 @@ import { ALLSHIPS } from './layouHelpers';
  
 
   return (
-    <div>
+    <div className={'select'}>
        <FormControl sx={{ m: 1, minWidth: 400 }}>
         <InputLabel id="demo-simple-select-helper-label">Choose available ship</InputLabel>
         <Select

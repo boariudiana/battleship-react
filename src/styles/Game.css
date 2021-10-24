@@ -1,0 +1,15 @@
+.boards{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.gameView{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.select{
+    align-self: flex-start;
+}
