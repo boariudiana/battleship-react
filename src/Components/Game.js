@@ -56,23 +56,19 @@ const Game = (props) => {
     }
   }, [availableShips]);
 
-  useEffect( () => {
-    if(isGameOver(computerCells)){
-      setWinner('user');
+  useEffect(() => {
+    if (isGameOver(computerCells)) {
+      setWinner("user");
       return;
-    };
-    
-    if(isGameOver(userCells)){
-      setWinner('user');
+    }
+
+    if (isGameOver(userCells)) {
+      setWinner("user");
       return;
-    };
-    
-
-
-  },[computerCells, userCells])
+    }
+  }, [computerCells, userCells]);
 
   const handleComputerShut = useCallback(() => {
-  
     let shut = generateRandomNumber(0, 99);
 
     while (validateShut(shut, userCells)) {
@@ -91,7 +87,7 @@ const Game = (props) => {
         return item;
       })
     );
-    
+
     switchTurn();
   }, [userCells]);
 
@@ -127,7 +123,7 @@ const Game = (props) => {
     );
     if (validShuts.length === 13) {
       setGameOver(true);
-      console.log('game over' , true)
+      console.log("game over", true);
       return true;
     }
 
@@ -139,6 +135,12 @@ const Game = (props) => {
 
     if (validateShut(point, computerCells)) {
       return;
+    }
+    const alert = computerCells.find((item, index) => index === point);
+
+    if (alert.cellStatus === CELL_STATE.empty) {
+      setAlertOpen(true);
+      setAlertMessage(`Lovitura ratata, mai incercati!`);
     }
 
     setComputerCells((prevState) =>
