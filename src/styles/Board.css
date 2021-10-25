@@ -21,3 +21,11 @@
   .filledColor{
     background-color:lightsalmon;
   }
+
+  .hit{
+    background-color: maroon;
+  }
+
+  .miss{
+    background-color: mediumaquamarine;
+  }

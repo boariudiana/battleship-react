@@ -48,7 +48,7 @@ export const SHIPS = {
 
 export const ALLSHIPS = [SHIPS.warship, SHIPS.distroyer1, SHIPS.distroyer2];
 
-const generateRandomNumber = (min, max) => {
+export const generateRandomNumber = (min, max) => {
   return Math.floor(Math.random() * (max - min) + min);
 };
 
@@ -151,7 +151,6 @@ export const generateComputerShips = () => {
   let isShipPlaced = false;
   while (isShipPlaced === false) {
     const { placed, newCells } = generateShip(isShipPlaced, cells, 5);
-    console.log(placed);
     isShipPlaced = placed;
     if (isShipPlaced === true) {
       cells = [...newCells];
@@ -175,6 +174,5 @@ export const generateComputerShips = () => {
       cells = [...newCells];
     }
   }
-  console.log(cells);
   return [...cells];
 };

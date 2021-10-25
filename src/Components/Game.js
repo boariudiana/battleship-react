@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import UserBoard from "./UserBoard";
 import ComputerBoard from "./ComputerBoard";
 import SelectShipDropDown from "./SelectShipDropDown";
@@ -13,9 +13,23 @@ import {
   SHIPS,
   ALLSHIPS,
   generateComputerShips,
+  generateRandomNumber,
 } from "./layouHelpers";
 import { Button } from "@mui/material";
 import "../styles/Game.css";
+
+const validateShut = (point, board) => {
+  const target = board.find((item, index) => index === point);
+  console.log(target);
+  if (
+    target.cellStatus === CELL_STATE.miss ||
+    target.cellStatus === CELL_STATE.hit ||
+    target.cellStatus === CELL_STATE.forbidden
+  ) {
+    return true;
+  }
+  return false;
+};
 
 const Game = (props) => {
   const [direction, setDirection] = useState("horizontal");
@@ -27,17 +41,49 @@ const Game = (props) => {
   const [alertMessage, setAlertMessage] = useState("");
   const [userCells, setUserCells] = useState(generateEmptyLayout());
   const [computerCells, setComputerCells] = useState(generateComputerShips());
-  const [readyToStart, setReadyToStart] = useState(false);
-  const [enableClickOnBoard, setEnableClickOnBoard] = useState(false);
+  const [startButtonEnabled, setStartButtonEnabled] = useState(false);
+  const [turn, setTurn] = useState("user");
+  const [isGameStarted, setIsGameStarted] = useState(false);
 
   useEffect(() => {
     if (availableShips.length === 0) {
       setShip("");
-      setReadyToStart(true);
+      setStartButtonEnabled(true);
     } else {
       setShip(availableShips[0]);
     }
   }, [availableShips]);
+
+  const handleComputerShut = useCallback(() => {
+    let shut = generateRandomNumber(0, 99);
+
+    while (validateShut(shut, userCells)) {
+      shut = generateRandomNumber(0, 99);
+    }
+
+    setUserCells((prevState) =>
+      prevState.map((item, index) => {
+        if (index === shut) {
+          if (item.cellStatus === CELL_STATE.empty) {
+            return { ...item, cellStatus: CELL_STATE.miss, value: "O" };
+          } else if (item.cellStatus === CELL_STATE.full) {
+            return { ...item, cellStatus: CELL_STATE.hit, value: "X" };
+          } else {
+            return { ...item, cellStatus: CELL_STATE.forbidden };
+          }
+        }
+        return item;
+      })
+    );
+
+    switchTurn();
+  }, [userCells]);
+
+  useEffect(() => {
+    if (turn === "computer") {
+      handleComputerShut();
+    }
+  }, [turn, handleComputerShut]);
 
   const handleShipChange = (event) => {
     setShip(event.target.value);
@@ -55,12 +101,40 @@ const Game = (props) => {
     setAlertOpen(false);
   };
 
-  const handleCompBoardClick = (index) => {
-    // continue here
+  const switchTurn = () => {
+    setTurn((prevState) => (prevState === "user" ? "computer" : "user"));
+  };
+
+  const handleShut = (point) => {
+    //user turn
+
+    if (validateShut(point, computerCells)) {
+      return;
+    }
+    setComputerCells((prevState) =>
+      prevState.map((item, index) => {
+        if (index === point) {
+          if (item.cellStatus === CELL_STATE.empty) {
+            return { ...item, cellStatus: CELL_STATE.miss, value: "O" };
+          } else if (item.cellStatus === CELL_STATE.full) {
+            return { ...item, cellStatus: CELL_STATE.hit, value: "X" };
+          } else {
+            setAlertOpen(true);
+            setAlertMessage(`Forbidden`);
+            setTurn("user");
+            return { ...item, cellStatus: CELL_STATE.forbidden };
+          }
+        }
+        return item;
+      })
+    );
+
+    switchTurn();
   };
 
   const handleStartGame = () => {
-    setEnableClickOnBoard(true);
+    setStartButtonEnabled(false);
+    setIsGameStarted(true);
   };
 
   const placeShip = (shipFirstCell, direction, cellNr) => {
@@ -190,10 +264,12 @@ const Game = (props) => {
         />
         <ComputerBoard
           boardCells={computerCells}
-          onHandleClick={enableClickOnBoard ? handleCompBoardClick : () => {}}
+          onHandleClick={
+            turn === "user" && isGameStarted ? handleShut : () => {}
+          }
         />
       </div>
-      {readyToStart && (
+      {startButtonEnabled && (
         <Button variant="contained" onClick={handleStartGame}>
           Start Game
         </Button>
