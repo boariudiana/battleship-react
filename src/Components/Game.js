@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { Button } from "@mui/material";
 import UserBoard from "./UserBoard";
 import ComputerBoard from "./ComputerBoard";
 import SelectShipDropDown from "./SelectShipDropDown";
@@ -15,7 +16,7 @@ import {
   generateComputerShips,
   generateRandomNumber,
 } from "./layouHelpers";
-import { Button } from "@mui/material";
+import CustomModal from "./CustomModal";
 import "../styles/Game.css";
 
 const validateShut = (point, board) => {
@@ -23,8 +24,7 @@ const validateShut = (point, board) => {
   console.log(target);
   if (
     target.cellStatus === CELL_STATE.miss ||
-    target.cellStatus === CELL_STATE.hit ||
-    target.cellStatus === CELL_STATE.forbidden
+    target.cellStatus === CELL_STATE.hit
   ) {
     return true;
   }
@@ -44,6 +44,8 @@ const Game = (props) => {
   const [startButtonEnabled, setStartButtonEnabled] = useState(false);
   const [turn, setTurn] = useState("user");
   const [isGameStarted, setIsGameStarted] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
+  const [winner, setWinner] = useState("");
 
   useEffect(() => {
     if (availableShips.length === 0) {
@@ -54,7 +56,23 @@ const Game = (props) => {
     }
   }, [availableShips]);
 
+  useEffect( () => {
+    if(isGameOver(computerCells)){
+      setWinner('user');
+      return;
+    };
+    
+    if(isGameOver(userCells)){
+      setWinner('user');
+      return;
+    };
+    
+
+
+  },[computerCells, userCells])
+
   const handleComputerShut = useCallback(() => {
+  
     let shut = generateRandomNumber(0, 99);
 
     while (validateShut(shut, userCells)) {
@@ -68,14 +86,12 @@ const Game = (props) => {
             return { ...item, cellStatus: CELL_STATE.miss, value: "O" };
           } else if (item.cellStatus === CELL_STATE.full) {
             return { ...item, cellStatus: CELL_STATE.hit, value: "X" };
-          } else {
-            return { ...item, cellStatus: CELL_STATE.forbidden };
           }
         }
         return item;
       })
     );
-
+    
     switchTurn();
   }, [userCells]);
 
@@ -105,12 +121,26 @@ const Game = (props) => {
     setTurn((prevState) => (prevState === "user" ? "computer" : "user"));
   };
 
+  const isGameOver = (board) => {
+    const validShuts = board.filter(
+      (item) => item.cellStatus === CELL_STATE.hit
+    );
+    if (validShuts.length === 13) {
+      setGameOver(true);
+      console.log('game over' , true)
+      return true;
+    }
+
+    return false;
+  };
+
   const handleShut = (point) => {
     //user turn
 
     if (validateShut(point, computerCells)) {
       return;
     }
+
     setComputerCells((prevState) =>
       prevState.map((item, index) => {
         if (index === point) {
@@ -118,11 +148,6 @@ const Game = (props) => {
             return { ...item, cellStatus: CELL_STATE.miss, value: "O" };
           } else if (item.cellStatus === CELL_STATE.full) {
             return { ...item, cellStatus: CELL_STATE.hit, value: "X" };
-          } else {
-            setAlertOpen(true);
-            setAlertMessage(`Forbidden`);
-            setTurn("user");
-            return { ...item, cellStatus: CELL_STATE.forbidden };
           }
         }
         return item;
@@ -237,8 +262,30 @@ const Game = (props) => {
     placeShip(index, direction, cellNumbers);
   };
 
+  const handleGameOver = () => {
+    setDirection("horizontal");
+    setPlacedShips([]);
+    setAvailableShips(ALLSHIPS);
+    setShip(SHIPS.warship);
+    setAlertOpen(false);
+    setDisabledShips([]);
+    setAlertMessage("");
+    setUserCells(generateEmptyLayout());
+    setComputerCells(generateComputerShips());
+    setStartButtonEnabled(false);
+    setTurn("user");
+    setIsGameStarted(false);
+    setGameOver(false);
+    setWinner("");
+  };
+
   return (
     <div className={"gameView"}>
+      <CustomModal
+        open={gameOver}
+        winner={winner}
+        handleClose={handleGameOver}
+      />
       <Alert
         message={alertMessage}
         onHandleClose={handleCloseAlert}

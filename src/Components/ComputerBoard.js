@@ -5,9 +5,7 @@ import "../styles/Board.css";
 
 const UserBoard = (props) => {
   const getColorClass = (cellStatus) => {
-    if (cellStatus === CELL_STATE.full) {
-      return "filledColor";
-    } else if (cellStatus === CELL_STATE.hit) {
+    if (cellStatus === CELL_STATE.hit) {
       return "hit";
     } else if (cellStatus === CELL_STATE.miss) {
       return "miss";
